@@ -13,9 +13,10 @@
         Classic view
       </button>
     </div>
-    <div class="mt-3 gx-5" v-bind:class="{ row: isView }">
+
+    <div class="mt-3" v-bind:class="{ row: isView }">
       <div
-        v-for="product of products"
+        v-for="product of currPageItems"
         :key="product.id"
         class="card"
         v-bind:class="{ 'col-md-3': isView, 'mr-0': isView }"
@@ -42,21 +43,11 @@
       </div>
     </div>
 
-    <div class="overflow-auto">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="pageSize"
-        aria-controls="my-table"
-      ></b-pagination>
-      <p class="mt-3">Current Page: {{ currentPage }}</p>
-    </div>
-
-    <div class="d-flex mt-2">
-      <div v-for="page of 3" :key="page">
-        <nuxt-link class="btn btn-light mr-2" to="/products/">{{
-          page
-        }}</nuxt-link>
+    <div class="d-flex pt-4">
+      <div v-for="pageNumber of pagesCounter" :key="pageNumber">
+        <button class="btn btn-light" @click.prevent="setPage(pageNumber)">
+          {{ pageNumber }}
+        </button>
       </div>
     </div>
 
@@ -132,15 +123,18 @@
 </template>
 
 <script>
+import { conditionalExpression } from '@babel/types';
+
 export default {
   async fetch({ store }) {
     if (store.getters["products/products"].length === 0) {
       await store.dispatch("products/fetch");
     }
   },
-  data: () => ({
+    data: () => ({
     pageSize: 4,
     currentPage: 1,
+    currPageItems: [],
     pageTitle: "products page",
     addName: "Name",
     addPrice: "addPrice",
@@ -150,23 +144,41 @@ export default {
     addTags: "addTags",
     categories: [],
     isView: true,
+    currItemsForPage: [],
   }),
   computed: {
+    startItemPosition() {
+      console.log("work");
+      if (this.currentPage !== 1) {
+        return this.currentPage * this.pageSize - this.pageSize + 1;
+      } else {
+        return 1;
+      }
+    },
+    endItemPosition() {
+      return this.products.length > (this.currentPage * this.pageSize + 1) ? (this.currentPage * this.pageSize + 1) : (this.products.length + 1)
+    },
     products() {
       return this.$store.getters["products/products"];
     },
-    rows() {
-      return this.products.length;
-    },
-    delPr(id) {
-      console.log(id);
-
-      this.products.filter((_product) => id != id);
+    pagesCounter() {
+      return Math.round(this.products.length / this.pageSize);
     },
   },
   methods: {
+    setPage(page) {
+      this.currentPage = page;
+      this.currItemsForPageChange()
+    },
+    currItemsForPageChange() {
+      this.currPageItems = [];
+      for (let i = this.startItemPosition - 1; i < this.endItemPosition - 1; i++) {
+        this.currPageItems.push(this.products[i]);
+      }
+    },
     changeView() {
       this.isView = !this.isView;
+      this.currItemsForPageChange()
     },
     openProduct(product) {
       this.$router.push("/products/" + product.id);
@@ -185,8 +197,8 @@ export default {
       this.$axios
         .request(options)
         .then(function (response) {
-          console.log(response.data.id);
-          this.delPr(id);
+          console.log(this.products);
+          this.products.filter((_product) => id != id);
         })
         .catch(function (error) {
           console.error(error);
