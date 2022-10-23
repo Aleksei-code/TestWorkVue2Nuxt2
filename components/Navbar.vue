@@ -34,9 +34,15 @@
           <a @click.prevent="logout" class="nav-link" href="#"> Logout </a>
         </li>
         <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+            v-model="searchingFor"
+          />
+          <button @click.prevent="searchBar(searchingFor)" class="btn btn-outline-success" type="submit">Search</button>
+        </form>
       </ul>
     </div>
   </nav>
@@ -44,6 +50,9 @@
 
 <script>
 export default {
+  data: () => ({
+    searchingFor:'',
+  }),
   computed: {
     hasToken() {
       return this.$store.getters.hasToken;
@@ -54,6 +63,24 @@ export default {
       this.$store.dispatch("logout");
       this.$router.push("/login");
     },
+  searchBar(req) {
+    const options = {
+  method: 'GET',
+  url: 'https://my-store2.p.rapidapi.com/catalog/products',
+  params: {skip: req, limit: '3'},
+  headers: {
+    'X-RapidAPI-Key': '0ee78aac30mshfa933e509f75de9p102ecfjsn94dec59f7f3e',
+    'X-RapidAPI-Host': 'my-store2.p.rapidapi.com'
+  }
+};
+console.log (req)
+console.log (options)
+this.$axios.request(options).then(function (response) {
+	console.log(response.data);
+}).catch(function (error) {
+	console.error(error);
+});
+  }
   },
 };
 </script>
