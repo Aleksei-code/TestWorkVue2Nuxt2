@@ -45,7 +45,10 @@
 
     <div class="d-flex pt-4">
       <div v-for="pageNumber of pagesCounter" :key="pageNumber">
-        <button class="btn btn-light" @click.prevent="setPage(pageNumber)">
+        <button
+          v-bind:class="[(pageNumber === currentPage) ? 'btn btn-primary' : 'btn btn-light']"
+          @click.prevent="setPage(pageNumber)"
+        >
           {{ pageNumber }}
         </button>
       </div>
@@ -135,7 +138,7 @@ export default {
     pageSize: 4,
     currentPage: 1,
     currPageItems: [],
-    pageTitle: "products page",
+    pageTitle: "Products page",
     addName: "Name",
     addPrice: "addPrice",
     addManufacturer: "addManufacturer",
