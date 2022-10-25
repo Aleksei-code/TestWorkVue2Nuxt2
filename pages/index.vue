@@ -6,15 +6,19 @@
     <li>Подключение и работа с общедоступным API <a noPrefetch target="_blank" rel="noopener noreferrer" href='https://rapidapi.com/iddogino1/api/my-store2'> ссылка</a></li>
     <li>Products page + pagination</li>
     <li>Изменение отображения списка элементов (реализовано 2 вида: плиточный и горизонтальный)</li>
+    <li>Удаление товара из магазина</li>
 
+<p></p>
     <div> В процессе:</div>
     <li>Добавить функцию добавления товара</li>
     <li>Добавить корзину</li>
     <li>Использование TypeScript</li>
+    <li>Использовать vuex/store, для хранения элементов, действий клиента.</li>
 
     <p></p>
     <div>
-      Matyunin Aleksey 2022 <a noPrefetch target="_blank" rel="noopener noreferrer" href='https://github.com/Aleksey-hub-z'> Ссылка на github</a>
+      Matyunin Aleksey 2022 
+     <p></p><a noPrefetch target="_blank" rel="noopener noreferrer" href='https://github.com/Aleksey-hub-z'> Ссылка на github</a>
     </div>
 
     <main> 

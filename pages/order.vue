@@ -1,8 +1,5 @@
 <template>
   <section>
-    <div v-if="$route.query.message" class="alert alert-danger mb-3">
-      Need login first
-    </div>
     <form>
       <h1>Cart page</h1>
       <div class="form-group">

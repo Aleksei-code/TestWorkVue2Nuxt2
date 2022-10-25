@@ -69,11 +69,12 @@ export default {
   },
   data: () => ({
     pageTitle: "Products page",
-    pageSize: 4,
+    pageSize: 20,
     currentPage: 1,
     currPageItems: [],
     categories: [],
     isView: true,
+    idInProccess: [],
     currItemsForPage: [],
   }),
   computed: {
@@ -121,7 +122,22 @@ export default {
     openProduct(product) {
       this.$router.push("/products/" + product.id);
     },
-    deleteProduct(id) {
+
+    inProccess(id) {
+      return this.idInProccess.some((el) => el == id);
+    },
+
+    async deleteProduct(id) {
+      if (!this.inProccess(id)) {
+        this.idInProccess.push(id);
+        let res = await this.deleteProductAxios(id);
+        this.products.filter((el) => el != id);
+        this.idInProccess = this.idInProccess.filter((el) => el != id);
+        this.$store.commit("products/deleteProductFromStore", id);
+      }
+    },
+
+    deleteProductAxios(id) {
       const options = {
         method: "DELETE",
         url: "https://my-store2.p.rapidapi.com/catalog/product/" + id,
@@ -135,31 +151,7 @@ export default {
       this.$axios
         .request(options)
         .then(function (response) {
-          console.log(response.data.id);
-          this.products.filter((_product) => id != id);
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
-    },
-    addProduct() {
-      const options = {
-        method: "POST",
-        url: "https://my-store2.p.rapidapi.com/catalog/product",
-        headers: {
-          "content-type": "application/json",
-          "X-RapidAPI-Key":
-            "0ee78aac30mshfa933e509f75de9p102ecfjsn94dec59f7f3e",
-          "X-RapidAPI-Host": "my-store2.p.rapidapi.com",
-        },
-        data: '{"name":"123","price":0,"manufacturer":"22","category":"32","description":"32","tags":"23"}',
-      };
-
-      this.$axios
-        .request(options)
-        .then(function (response) {
-          const n1 = response.date;
-          console.log(n1);
+          return response.data.id;
         })
         .catch(function (error) {
           console.error(error);
