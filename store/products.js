@@ -31,6 +31,7 @@ export const actions = {
       },
     };
 
+
     const products = await this.$axios
       .request(options)
       .then(function (response) {

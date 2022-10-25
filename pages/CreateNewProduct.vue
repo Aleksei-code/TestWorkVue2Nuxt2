@@ -10,7 +10,8 @@
           <div class="col-md-4">
             <label class="form-label m-2">Name</label>
             <input
-              type="email"
+              type="text"
+              placeholder="Enter the name"
               class="form-control"
               v-model="addName"
               id="addName"
@@ -19,7 +20,8 @@
           <div class="col-md-4">
             <label class="form-label m-2">Price</label>
             <input
-              type="email"
+              type="text"
+              placeholder="Enter the price"
               class="form-control"
               v-model="addPrice"
               id="addPrice"
@@ -28,7 +30,8 @@
           <div class="col-md-4">
             <label class="form-label m-2">Manufacturer</label>
             <input
-              type="email"
+              type="text"
+              placeholder="Enter the manufacturer"
               class="form-control"
               v-model="addManufacturer"
               id="addManufacturer"
@@ -37,7 +40,8 @@
           <div class="col-md-4">
             <label class="form-label m-2">Category</label>
             <input
-              type="email"
+              type="text"
+              placeholder="Enter the category"
               class="form-control"
               v-model="addCategory"
               id="addCategory"
@@ -46,7 +50,8 @@
           <div class="col-md-4">
             <label class="form-label m-2">Description</label>
             <input
-              type="email"
+              type="text"
+              placeholder="Enter the description"
               class="form-control"
               v-model="addDescription"
               id="addDescription"
@@ -55,7 +60,8 @@
           <div class="col-md-4">
             <label class="form-label m-2">Tags</label>
             <input
-              type="email"
+              type="text"
+              placeholder="Enter tags"
               class="form-control"
               v-model="addTags"
               id="addTags"
@@ -68,23 +74,50 @@
           </div>
         </div>
       </form>
+      <div v-if="resp">
+        <div>Successful creation!</div>
+        <button class="btn btn-success" @click.prevent="openProduct()">
+          Go to your new product
+        </button>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
+import { timingSafeEqual } from "crypto";
+
 export default {
   data: () => ({
-    pageTitle: "Products page",
-    addName: "Name",
-    addPrice: "addPrice",
-    addManufacturer: "addManufacturer",
-    addCategory: "addCategory",
-    addDescription: "addDescription",
-    addTags: "addTags",
+    pageTitle: "",
+    addName: "",
+    addPrice: "",
+    addManufacturer: "",
+    addCategory: "",
+    addDescription: "",
+    addTags: "",
+    collectedData: {},
+    resp: "",
   }),
   methods: {
-    addProduct() {
+    collectData() {
+      this.collectedData = {
+        name: this.addName,
+        price: this.addPrice,
+        manufacturer: this.addManufacturer,
+        category: this.addCategory,
+        description: this.addDescription,
+        tags: this.addTags,
+      };
+      let b = JSON.stringify(this.collectedData);
+      console.log(b);
+    },
+    openProduct() {
+      this.$router.push("/products/" + this.resp);
+    },
+    addProductAxios() {
+      this.collectData();
+      let vm = this;
       const options = {
         method: "POST",
         url: "https://my-store2.p.rapidapi.com/catalog/product",
@@ -94,18 +127,20 @@ export default {
             "0ee78aac30mshfa933e509f75de9p102ecfjsn94dec59f7f3e",
           "X-RapidAPI-Host": "my-store2.p.rapidapi.com",
         },
-        data: '{"name":"123","price":0,"manufacturer":"22","category":"32","description":"32","tags":"23"}',
+        data: this.collectedData,
       };
 
       this.$axios
         .request(options)
         .then(function (response) {
-          const n1 = response.date;
-          console.log(n1);
+          vm.resp = response.data.id;
         })
         .catch(function (error) {
           console.error(error);
         });
+    },
+    addProduct() {
+      this.addProductAxios();
     },
   },
 };
