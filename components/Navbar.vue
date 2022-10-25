@@ -16,8 +16,8 @@
           </nuxt-link>
         </li>
         <li class="nav-item">
-          <nuxt-link active-class="active" class="nav-link" to="/about">
-            About
+          <nuxt-link active-class="active" class="nav-link" to="/searchPage">
+            Search
           </nuxt-link>
         </li>
         <li class="nav-item">
@@ -25,13 +25,14 @@
             Products
           </nuxt-link>
         </li>
-        <li class="nav-item" v-if="!hasToken">
-          <nuxt-link active-class="active" class="nav-link" to="/login">
-            Login
+        <li class="nav-item">
+          <nuxt-link
+            active-class="active"
+            class="nav-link"
+            to="/createNewProduct"
+          >
+            New Product
           </nuxt-link>
-        </li>
-        <li class="nav-item" v-else>
-          <a @click.prevent="logout" class="nav-link" href="#"> Logout </a>
         </li>
         <form class="d-flex" role="search">
           <input
@@ -41,7 +42,13 @@
             aria-label="Search"
             v-model="searchingFor"
           />
-          <button @click.prevent="searchBar(searchingFor)" class="btn btn-outline-success" type="submit">Search</button>
+          <button
+            @click.prevent="searchBar(searchingFor)"
+            class="btn btn-outline-success"
+            type="submit"
+          >
+            Search
+          </button>
         </form>
       </ul>
     </div>
@@ -51,7 +58,7 @@
 <script>
 export default {
   data: () => ({
-    searchingFor:'',
+    searchingFor: "",
   }),
   computed: {
     hasToken() {
@@ -59,28 +66,26 @@ export default {
     },
   },
   methods: {
-    logout() {
-      this.$store.dispatch("logout");
-      this.$router.push("/login");
+    searchBar(req) {
+      const options = {
+        method: "GET",
+        url: "https://my-store2.p.rapidapi.com/catalog/products",
+        params: { skip: req, limit: "3" },
+        headers: {
+          "X-RapidAPI-Key":
+            "0ee78aac30mshfa933e509f75de9p102ecfjsn94dec59f7f3e",
+          "X-RapidAPI-Host": "my-store2.p.rapidapi.com",
+        },
+      };
+      this.$axios
+        .request(options)
+        .then(function (response) {
+          console.log(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
     },
-  searchBar(req) {
-    const options = {
-  method: 'GET',
-  url: 'https://my-store2.p.rapidapi.com/catalog/products',
-  params: {skip: req, limit: '3'},
-  headers: {
-    'X-RapidAPI-Key': '0ee78aac30mshfa933e509f75de9p102ecfjsn94dec59f7f3e',
-    'X-RapidAPI-Host': 'my-store2.p.rapidapi.com'
-  }
-};
-console.log (req)
-console.log (options)
-this.$axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
-  }
   },
 };
 </script>
